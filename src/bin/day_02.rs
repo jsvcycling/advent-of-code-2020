@@ -29,8 +29,7 @@ fn part2(passwords: &Vec<Password>) -> usize {
             let check_a = p.word.as_bytes()[p.a - 1] as char == p.letter;
             let check_b = p.word.as_bytes()[p.b - 1] as char == p.letter;
 
-            // Rust doesn't have an xor operator so here we go...
-            (check_a || check_b) && !(check_a && check_b)
+            check_a ^ check_b
         })
         .filter(|v| *v == true)
         .count()
