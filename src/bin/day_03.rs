@@ -10,16 +10,16 @@ fn compute(lines: &Vec<String>, move_x: usize, move_y: usize) -> Result<usize> {
     let line_length = lines[0].len();
 
     while pos.1 + move_y < lines.len() {
-      pos.0 += move_x;
-      pos.1 += move_y;
+        pos.0 += move_x;
+        pos.1 += move_y;
 
-      if pos.0 >= line_length {
-        pos.0 -= line_length;
-      }
+        if pos.0 >= line_length {
+            pos.0 -= line_length;
+        }
 
-      if lines[pos.1].as_bytes()[pos.0] as char == '#' {
-        num_trees += 1;
-      }
+        if lines[pos.1].as_bytes()[pos.0] as char == '#' {
+            num_trees += 1;
+        }
     }
 
     Ok(num_trees)
