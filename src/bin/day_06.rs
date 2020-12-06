@@ -6,9 +6,11 @@ pub fn main() {
     let groups: Vec<_> = buf.split("\n\n").collect();
 
     let part1 = groups.iter().fold(0, |acc, g| {
-        let mut ids = g.chars().collect::<HashSet<_>>();
-        ids.remove(&'\n');
-        acc + ids.len()
+        acc + g
+            .chars()
+            .filter(|c| c.is_alphabetic())
+            .collect::<HashSet<_>>()
+            .len()
     });
 
     let part2 = groups.iter().fold(0, |acc, g| {
