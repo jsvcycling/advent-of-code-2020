@@ -1,43 +1,39 @@
-use std::io::prelude::*;
+use std::fs::read_to_string;
 
-use std::fs::File;
-use std::io::{BufReader, Result};
+pub fn main() {
+    let buf = read_to_string("inputs/day_05.txt").unwrap();
 
-pub fn main() -> Result<()> {
-    let f = BufReader::new(File::open("inputs/day_05.txt")?);
-    let lines: Vec<String> = f.lines().map(|l| l.unwrap()).collect();
-
-    let mut ids: Vec<i32> = lines
-        .iter()
+    let mut ids: Vec<i32> = buf
+        .lines()
         .map(|line| {
-            let mut row_range = (0, 127);
-            let mut seat_range = (0, 7);
+            let mut rows = (0, 127);
+            let mut seats = (0, 7);
 
             line.chars().for_each(|c| {
                 match c {
                     'F' => {
-                        row_range.1 = (row_range.1 + row_range.0) / 2;
+                        rows.1 = (rows.1 + rows.0) / 2;
                     }
                     'B' => {
-                        row_range.0 = (row_range.1 + row_range.0 + 1) / 2;
+                        rows.0 = (rows.1 + rows.0 + 1) / 2;
                     }
                     'L' => {
-                        seat_range.1 = (seat_range.1 + seat_range.0) / 2;
+                        seats.1 = (seats.1 + seats.0) / 2;
                     }
                     'R' => {
-                        seat_range.0 = (seat_range.1 + seat_range.0 + 1) / 2;
+                        seats.0 = (seats.1 + seats.0 + 1) / 2;
                     }
                     _ => panic!("Received: {:?}", c),
                 };
             });
 
-            row_range.0 * 8 + seat_range.0
+            rows.0 * 8 + seats.0
         })
         .collect();
 
     ids.sort();
 
-    println!("Part 1: {}", ids.iter().max().unwrap());
+    println!("Part 1: {}", ids.last().unwrap());
 
     // We can do this more efficiently using a BSP again but we'll just do it
     // linearly. This will run in O(n) which isn't terrible for this case (a BSP
@@ -48,6 +44,4 @@ pub fn main() -> Result<()> {
             break;
         }
     }
-
-    Ok(())
 }
