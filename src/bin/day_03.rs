@@ -1,17 +1,14 @@
-use std::io::prelude::*;
+use std::fs::read_to_string;
 
-use std::fs::File;
-use std::io::{BufReader, Result};
-
-fn compute(lines: &Vec<String>, move_x: usize, move_y: usize) -> Result<usize> {
+fn compute(lines: &Vec<&str>, movement: (usize, usize)) -> usize {
     let mut num_trees = 0;
     let mut pos = (0, 0);
 
     let line_length = lines[0].len();
 
-    while pos.1 + move_y < lines.len() {
-        pos.0 += move_x;
-        pos.1 += move_y;
+    while pos.1 + movement.1 < lines.len() {
+        pos.0 += movement.0;
+        pos.1 += movement.1;
 
         if pos.0 >= line_length {
             pos.0 -= line_length;
@@ -22,24 +19,21 @@ fn compute(lines: &Vec<String>, move_x: usize, move_y: usize) -> Result<usize> {
         }
     }
 
-    Ok(num_trees)
+    num_trees
 }
 
-pub fn main() -> Result<()> {
-    let f = BufReader::new(File::open("inputs/day_03.txt")?);
+pub fn main() {
+    let buf = read_to_string("inputs/day_03.txt").unwrap();
+    let lines: Vec<&str> = buf.lines().collect();
 
-    let lines: Vec<String> = f.lines().map(|l| l.unwrap()).collect();
-
-    let part1 = compute(&lines, 3, 1)?;
+    let part1 = compute(&lines, (3, 1));
 
     println!("Part 1: {}", part1);
 
-    let part_2a = compute(&lines, 1, 1)?;
-    let part_2b = compute(&lines, 5, 1)?;
-    let part_2c = compute(&lines, 7, 1)?;
-    let part_2d = compute(&lines, 1, 2)?;
+    let part_2a = compute(&lines, (1, 1));
+    let part_2b = compute(&lines, (5, 1));
+    let part_2c = compute(&lines, (7, 1));
+    let part_2d = compute(&lines, (1, 2));
 
     println!("Part 2: {}", part_2a * part1 * part_2b * part_2c * part_2d);
-
-    Ok(())
 }
