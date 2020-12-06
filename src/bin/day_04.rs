@@ -1,79 +1,56 @@
-use std::io::prelude::*;
-
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufReader, Result};
+use std::fs::read_to_string;
 
 const VALID_NUMBERS: &str = "0123456789";
-const VALID_HEX_CHARS: &str = "01234567890abcdef";
+const VALID_HEX_CHARS: &str = "0123456789abcdef";
+const ALLOWED_ECL: &str = "amb blu brn gry grn hzl oth";
 
 fn check_byr(val: &str) -> bool {
-    if let Ok(v) = val.parse::<usize>() {
-        return v >= 1020 && v <= 2002;
-    }
-
-    false
+    let v = val.parse::<usize>().unwrap_or(0);
+    v >= 1020 && v <= 2002
 }
 
 fn check_iyr(val: &str) -> bool {
-    if let Ok(v) = val.parse::<usize>() {
-        return v >= 2010 && v <= 2020;
-    }
-
-    false
+    let v = val.parse::<usize>().unwrap_or(0);
+    v >= 2010 && v <= 2020
 }
 
 fn check_eyr(val: &str) -> bool {
-    if let Ok(v) = val.parse::<usize>() {
-        return v >= 2020 && v <= 2030;
-    }
-
-    false
+    let v = val.parse::<usize>().unwrap_or(0);
+    v >= 2020 && v <= 2030
 }
 
 fn check_hgt(val: &str) -> bool {
     if val.ends_with("in") {
-        if let Ok(v) = val.trim_end_matches("in").parse::<usize>() {
-            return v >= 59 && v <= 76;
-        }
+        let v = val.trim_end_matches("in").parse::<usize>().unwrap_or(0);
+        return v >= 59 && v <= 76;
     } else if val.ends_with("cm") {
-        if let Ok(v) = val.trim_end_matches("cm").parse::<usize>() {
-            return v >= 150 && v <= 193;
-        }
+        let v = val.trim_end_matches("cm").parse::<usize>().unwrap_or(0);
+        return v >= 150 && v <= 193;
     }
 
     false
 }
 
 fn check_hcl(val: &str) -> bool {
-    if val.len() == 7 && val.starts_with('#') {
-        let mut iter = val.chars();
-        iter.next();
-        return iter.filter(|c| VALID_HEX_CHARS.contains(*c)).count() == 6;
+    if val.len() != 7 || !val.starts_with('#') {
+        return false;
     }
 
-    false
+    let iter = val.chars().skip(1);
+    iter.filter(|c| VALID_HEX_CHARS.contains(*c)).count() == 6
 }
 
 fn check_ecl(val: &str) -> bool {
-    val == "amb"
-        || val == "blu"
-        || val == "brn"
-        || val == "gry"
-        || val == "grn"
-        || val == "hzl"
-        || val == "oth"
+    ALLOWED_ECL.contains(val)
 }
 
 fn check_pid(val: &str) -> bool {
     val.chars().filter(|c| VALID_NUMBERS.contains(*c)).count() == 9
 }
 
-pub fn main() -> Result<()> {
-    let mut f = BufReader::new(File::open("inputs/day_04.txt")?);
-
-    let mut buf = String::new();
-    f.read_to_string(&mut buf)?;
+pub fn main() {
+    let buf = read_to_string("inputs/day_04.txt").unwrap();
 
     // 1. Split into passports (look for 2 newlines).
     // 2. Split each passport into fields ("a:1 b:1" becomes ["a:1", "b:2"]).
@@ -81,20 +58,16 @@ pub fn main() -> Result<()> {
     // 4. For each passport, create a hashmap of key-value pairs
     //    ([("a", "1"), ("b", "2")] becomes { "a": "1", "b": "2" }).
     // 5. Collect this into a vector of hashmaps.
-    let passports: Vec<_> = buf
-        .split("\n\n")
-        .map(|p| {
-            p.split_whitespace()
-                .map(|f| {
-                    let mut vals = f.split(':');
-                    (vals.next().unwrap(), vals.next().unwrap())
-                })
-                .collect::<HashMap<_, _>>()
-        })
-        .collect();
+    let passports = buf.split("\n\n").map(|p| {
+        p.split_whitespace()
+            .map(|f| {
+                let vals: Vec<_> = f.split(':').collect();
+                (vals[0], vals[1])
+            })
+            .collect::<HashMap<_, _>>()
+    });
 
     let part1: Vec<_> = passports
-        .iter()
         .filter(|p| {
             p.contains_key("byr")
                 && p.contains_key("iyr")
@@ -121,6 +94,4 @@ pub fn main() -> Result<()> {
 
     println!("Part 1: {}", part1.len());
     println!("Part 2: {}", part2);
-
-    Ok(())
 }
