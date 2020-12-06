@@ -1,45 +1,40 @@
-use std::io::prelude::*;
+use std::fs::read_to_string;
 
-use std::fs::File;
-use std::io::{BufReader, Error, ErrorKind, Result};
-
-fn part1(amounts: &Vec<u32>) -> Result<u32> {
+fn part1(amounts: &Vec<u32>) -> u32 {
     for x in 0..amounts.len() {
         for y in (x + 1)..amounts.len() {
             if amounts[x] + amounts[y] == 2020 {
-                return Ok(amounts[x] * amounts[y]);
+                return amounts[x] * amounts[y];
             }
         }
     }
 
-    Err(Error::from(ErrorKind::NotFound))
+    0
 }
 
-fn part2(amounts: &Vec<u32>) -> Result<u32> {
+fn part2(amounts: &Vec<u32>) -> u32 {
     for x in 0..amounts.len() {
         for y in (x + 1)..amounts.len() {
             for z in (y + 1)..amounts.len() {
                 if amounts[x] + amounts[y] + amounts[z] == 2020 {
-                    return Ok(amounts[x] * amounts[y] * amounts[z]);
+                    return amounts[x] * amounts[y] * amounts[z];
                 }
             }
         }
     }
 
-    Err(Error::from(ErrorKind::NotFound))
+    0
 }
 
-pub fn main() -> Result<()> {
-    let f = BufReader::new(File::open("inputs/day_01.txt")?);
-
-    let mut amounts = f
+pub fn main() {
+    let mut amounts = read_to_string("inputs/day_01.txt")
+        .unwrap()
         .lines()
-        .map(|line| line.unwrap().parse::<u32>().unwrap())
+        .map(|line| line.parse::<u32>().unwrap())
         .collect::<Vec<u32>>();
 
     amounts.sort();
 
-    println!("Part 1: {}", part1(&amounts)?);
-    println!("Part 2: {}", part2(&amounts)?);
-    Ok(())
+    println!("Part 1: {}", part1(&amounts));
+    println!("Part 2: {}", part2(&amounts));
 }
