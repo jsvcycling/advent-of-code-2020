@@ -1,7 +1,4 @@
-use std::io::prelude::*;
-
-use std::fs::File;
-use std::io::{BufReader, Result};
+use std::fs::read_to_string;
 
 struct Password {
     a: usize,
@@ -11,37 +8,28 @@ struct Password {
 }
 
 fn part1(passwords: &Vec<Password>) -> usize {
-    passwords
-        .iter()
-        .map(|p| {
-            let count = p.word.matches(p.letter).count();
+    passwords.iter().fold(0, |acc, p| {
+        let count = p.word.matches(p.letter).count();
 
-            count >= p.a && count <= p.b
-        })
-        .filter(|v| *v == true)
-        .count()
+        acc + (count >= p.a && count <= p.b) as usize
+    })
 }
 
 fn part2(passwords: &Vec<Password>) -> usize {
-    passwords
-        .iter()
-        .map(|p| {
-            let check_a = p.word.as_bytes()[p.a - 1] as char == p.letter;
-            let check_b = p.word.as_bytes()[p.b - 1] as char == p.letter;
+    passwords.iter().fold(0, |acc, p| {
+        let check_a = p.word.as_bytes()[p.a - 1] as char == p.letter;
+        let check_b = p.word.as_bytes()[p.b - 1] as char == p.letter;
 
-            check_a ^ check_b
-        })
-        .filter(|v| *v == true)
-        .count()
+        acc + (check_a ^ check_b) as usize
+    })
 }
 
-pub fn main() -> Result<()> {
-    let f = BufReader::new(File::open("inputs/day_02.txt")?);
+pub fn main() {
+    let buf = read_to_string("inputs/day_02.txt").unwrap();
 
-    let passwords: Vec<Password> = f
+    let passwords: Vec<Password> = buf
         .lines()
-        .map(|l| {
-            let line = l.unwrap();
+        .map(|line| {
             let parts: Vec<&str> = line.split(':').collect();
             let rule_parts: Vec<&str> = parts[0].split(|c| c == '-' || c == ' ').collect();
 
@@ -49,13 +37,11 @@ pub fn main() -> Result<()> {
                 a: rule_parts[0].parse().unwrap(),
                 b: rule_parts[1].parse().unwrap(),
                 letter: rule_parts[2].chars().next().unwrap(),
-                word: String::from(parts[1].trim()),
+                word: parts[1].trim().to_string(),
             }
         })
         .collect();
 
     println!("Part 1: {}", part1(&passwords));
     println!("Part 2: {}", part2(&passwords));
-
-    Ok(())
 }
