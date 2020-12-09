@@ -18,14 +18,17 @@ fn part1(values: &[u64]) -> u64 {
 
 fn part2(values: &[u64], target: u64) -> u64 {
     for start_idx in 0..values.len() {
-        let mut nums = Vec::new();
+        let mut min = u64::MAX;
+        let mut max = u64::MIN;
         let mut sum = 0;
 
         for idx in (start_idx + 1)..values.len() {
             if values[idx] + sum < target {
-                // If the total is still less than the target, append this value
-                // the list and move onto the next value.
-                nums.push(values[idx]);
+                // If the new total is still less than the target, append this
+                // value the list and move onto the next value.
+                min = u64::min(min, values[idx]);
+                max = u64::max(max, values[idx]);
+
                 sum += values[idx];
                 continue;
             } else if values[idx] + sum > target {
@@ -35,8 +38,9 @@ fn part2(values: &[u64], target: u64) -> u64 {
             }
 
             // We found the right sequence!
-            nums.push(values[idx]);
-            return nums.iter().min().unwrap() + nums.iter().max().unwrap();
+            min = u64::min(min, values[idx]);
+            max = u64::max(max, values[idx]);
+            return min + max;
         }
     }
 
