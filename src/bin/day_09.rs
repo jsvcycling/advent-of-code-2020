@@ -32,13 +32,13 @@ fn part2(values: &[u64], target: &u64) -> u64 {
                     max = u64::max(max, *val);
                     sum += *val;
                     continue;
-                },
+                }
                 Ordering::Greater => {
                     // If we're going to pass the target with this value, we
                     // know this sequence won't work so stop and move onto the
                     // next one.
                     break;
-                },
+                }
                 _ => {
                     // We found the right sequence!
                     min = u64::min(min, *val);
