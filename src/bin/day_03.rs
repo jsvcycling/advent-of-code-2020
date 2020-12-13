@@ -1,6 +1,6 @@
 use std::fs::read_to_string;
 
-fn compute(lines: &Vec<&str>, movement: (usize, usize)) -> usize {
+fn compute(lines: &[&str], movement: (usize, usize)) -> usize {
     let mut num_trees = 0;
     let mut pos = (0, 0);
 

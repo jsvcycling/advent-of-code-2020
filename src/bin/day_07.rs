@@ -14,7 +14,7 @@ type Part2Graph = HashMap<String, HashMap<String, usize>>;
 // work our way further out. We use a set as the inner data structure because
 // we don't care about the *number* of bags, we only care about the fact that
 // they are there.
-fn build_graph_part1(buf: &String) -> Part1Graph {
+fn build_graph_part1(buf: &str) -> Part1Graph {
     let mut g: Part1Graph = HashMap::new();
 
     buf.lines().for_each(|l| {
@@ -27,7 +27,7 @@ fn build_graph_part1(buf: &String) -> Part1Graph {
             // Even though we don't care about the number of bags, we still need
             // to try and parse a count to distinguish between a number and "no
             // bags".
-            if let Ok(_) = subparts[0].parse::<usize>() {
+            if subparts[0].parse::<usize>().is_ok() {
                 let name = subparts[1]
                     .trim_end_matches(" bag")
                     .trim_end_matches(" bags")
@@ -54,7 +54,7 @@ fn build_graph_part1(buf: &String) -> Part1Graph {
 // So the same line "A contains 2 B, 3 C." will now be stored as
 // { "A": { "B": 2, "C": 3 } }. Now we can efficiently traverse the graph from
 // the outside in.
-fn build_graph_part2(buf: &String) -> Part2Graph {
+fn build_graph_part2(buf: &str) -> Part2Graph {
     let mut g: Part2Graph = HashMap::new();
 
     buf.lines().for_each(|l| {
@@ -88,7 +88,7 @@ fn build_graph_part2(buf: &String) -> Part2Graph {
 }
 
 // Traverse the part1 graph, building a set of all the bags encountered.
-fn execute_part1(bags: &mut HashSet<String>, graph: &Part1Graph, target: &String) {
+fn execute_part1(bags: &mut HashSet<String>, graph: &Part1Graph, target: &str) {
     if let Some(g) = graph.get(target) {
         g.iter().for_each(|k| {
             bags.insert(k.clone());
@@ -98,7 +98,7 @@ fn execute_part1(bags: &mut HashSet<String>, graph: &Part1Graph, target: &String
 }
 
 // Traverse the part2 graph, counting the number of bags encountered.
-fn execute_part2(graph: &Part2Graph, target: &String) -> usize {
+fn execute_part2(graph: &Part2Graph, target: &str) -> usize {
     if let Some(g) = graph.get(target) {
         // We need to count the current bag as well as all its inner bags.
         return g.iter().map(|(k, v)| v + v * execute_part2(graph, k)).sum();

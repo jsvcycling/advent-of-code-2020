@@ -31,7 +31,7 @@ pub fn main() {
         })
         .collect();
 
-    ids.sort();
+    ids.sort_unstable();
 
     println!("Part 1: {}", ids.last().unwrap());
 

@@ -7,7 +7,7 @@ struct Password {
     word: String,
 }
 
-fn part1(passwords: &Vec<Password>) -> usize {
+fn part1(passwords: &[Password]) -> usize {
     passwords.iter().fold(0, |acc, p| {
         let count = p.word.matches(p.letter).count();
 
@@ -15,7 +15,7 @@ fn part1(passwords: &Vec<Password>) -> usize {
     })
 }
 
-fn part2(passwords: &Vec<Password>) -> usize {
+fn part2(passwords: &[Password]) -> usize {
     passwords.iter().fold(0, |acc, p| {
         let check_a = p.word.as_bytes()[p.a - 1] as char == p.letter;
         let check_b = p.word.as_bytes()[p.b - 1] as char == p.letter;

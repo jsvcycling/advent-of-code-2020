@@ -1,6 +1,6 @@
 use std::fs::read_to_string;
 
-fn part1(amounts: &Vec<u32>) -> u32 {
+fn part1(amounts: &[u32]) -> u32 {
     for x in 0..amounts.len() {
         for y in (x + 1)..amounts.len() {
             if amounts[x] + amounts[y] == 2020 {
@@ -12,7 +12,7 @@ fn part1(amounts: &Vec<u32>) -> u32 {
     0
 }
 
-fn part2(amounts: &Vec<u32>) -> u32 {
+fn part2(amounts: &[u32]) -> u32 {
     for x in 0..amounts.len() {
         for y in (x + 1)..amounts.len() {
             for z in (y + 1)..amounts.len() {
@@ -33,7 +33,7 @@ pub fn main() {
         .map(|line| line.parse::<u32>().unwrap())
         .collect::<Vec<u32>>();
 
-    amounts.sort();
+    amounts.sort_unstable();
 
     println!("Part 1: {}", part1(&amounts));
     println!("Part 2: {}", part2(&amounts));
