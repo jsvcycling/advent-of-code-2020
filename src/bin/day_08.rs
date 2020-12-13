@@ -1,14 +1,14 @@
 use std::collections::HashSet;
 use std::fs::read_to_string;
 
-fn execute(lines: &Vec<&str>) -> (i32, bool) {
+fn execute(lines: &[&str]) -> (i32, bool) {
     let mut accumulator: i32 = 0;
     let mut visited: HashSet<i32> = HashSet::new();
 
     let mut idx: i32 = 0;
 
     while idx < lines.len() as i32 {
-        let line = lines[idx as usize].clone();
+        let line = lines[idx as usize];
 
         let mut parts = line.split_whitespace();
         let op = parts.next().unwrap();
