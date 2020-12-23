@@ -1,48 +1,38 @@
 use std::fs::read_to_string;
 
-fn part1(target: &usize, routes: &[&str]) -> usize {
-    let routes = routes
-        .iter()
-        .filter(|c| **c != "x")
-        .map(|r| r.parse::<usize>().unwrap())
-        .collect::<Vec<_>>();
-
-    let mut min_val = usize::MAX;
+fn part1(target: &usize, routes: &[usize]) -> usize {
+    let mut min_diff = usize::MAX;
     let mut min_id = 0;
 
-    for route in routes {
-        let iters = target / route;
-        let val = route * (iters + 1);
-        let diff = val - target;
+    routes.iter().filter(|r| **r != 0).for_each(|r| {
+        // Find the first instance of `r` that is above the target.
+        let val = r * ((target / r) + 1);
 
-        if diff < min_val {
-            min_val = diff;
-            min_id = route;
+        if (val - target) < min_diff {
+            min_diff = val - target;
+            min_id = *r;
         }
-    }
+    });
 
-    min_id * min_val
+    min_id * min_diff
 }
 
 // Based on Reddit (uses Chinese remainder theorem).
-fn part2(routes: &[&str]) -> usize {
-    let routes = routes
-        .iter()
-        .enumerate()
-        .filter(|(_, v)| **v != "x")
-        .map(|(k, v)| (k, v.parse::<usize>().unwrap()))
-        .collect::<Vec<_>>();
-
+fn part2(routes: &[usize]) -> usize {
     let mut solution = 0;
     let mut lcd = 1;
 
-    routes.into_iter().for_each(|(offset, route)| {
-        while (solution + offset) % route != 0 {
-            solution += lcd;
-        }
+    routes
+        .iter()
+        .enumerate()
+        .filter(|(_, v)| **v != 0)
+        .for_each(|(offset, route)| {
+            while (solution + offset) % route != 0 {
+                solution += lcd;
+            }
 
-        lcd *= route;
-    });
+            lcd *= route;
+        });
 
     solution
 }
@@ -52,7 +42,10 @@ fn main() {
     let lines = buf.lines().collect::<Vec<_>>();
 
     let target = lines[0].parse::<usize>().unwrap();
-    let routes = lines[1].split(',').collect::<Vec<_>>();
+    let routes = lines[1]
+        .split(',')
+        .map(|r| r.parse::<usize>().unwrap_or(0))
+        .collect::<Vec<_>>();
 
     println!("Part 1: {}", part1(&target, &routes));
     println!("Part 2: {}", part2(&routes));
