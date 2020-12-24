@@ -27,7 +27,7 @@ fn part2(lines: &[usize]) -> usize {
             3 => {
                 // Split off.
                 curr_slice.push(w[0]);
-                slices.push(curr_slice);
+                slices.push(curr_slice.clone());
                 curr_slice = Vec::new();
             }
             _ => (),
